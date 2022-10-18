@@ -12,6 +12,7 @@ const echo = (args, print) => {
 
 const pwd = (args, print) => {
     print(__dirname.split('\\').at(-1)) //at (-1) toma el ultimo elemento del array
+    //print(process.mainModule.path)
 }
 
 const date = (args, print) => {
