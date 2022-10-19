@@ -2,28 +2,29 @@ var fs  = require("fs")
 var http  = require("http")
 
 // Escribí acá tu servidor
-
-//npm i -g nodemon
-
-// var fs  = require("fs")
-// var http  = require("http")
+//npm init -y
+//npm i nodemon
 
 // Escribí acá tu servidor
 
-// http.createServer((req, res) => {
-//     const name = req.url.slice(1)
-//     const files = fs.readdirSync('./images')
+http.createServer((req, res) => {
+    const nameImage = req.url.slice(1) //asi nos corta la barrita y nos quedamos con el resto de la palabra
+    const images = fs.readdirSync('./images')
 
-//     for(let file of files) {
-//         if(file.includes(name)) {
-//             res.writeHead(200, {'Content-type' : 'image/jpg'})
-//             const img = fs.readFileSync(`./images/${name}_doge.jpg`)
-//             return res.end(img)
-//         }
-//     }
-//     return writeHead(404).end('Not found 404')
-// }).listen(3001, 'localhost')
+    for(const image of images) {
+        if(image.includes(nameImage)) {
+            res.writeHead(200, {'Content-type' : 'image/jpg'})
+            const img = fs.readFileSync(`./images/${nameImage}_doge.jpg`)
+            return res.end(img)
+        }
+    }
+    res.writeHead(404, {'Content-type' : 'text/plain'})
+    return res.end('Not found. Request invalid.')
+     
+}).listen(3001, 'localhost')
 
+
+//-----------------------------------------------------------------------------------
 // http.createServer((req, res) => {
 //     if(req.url === '/arcoiris_doge.jpg') {
 //         fs.readFile(`./images/${req.url}.jpg`, (err, data) =>{
