@@ -20,14 +20,14 @@ class $Promise {
     )
    }
 
-   static resolve(value) {
-    if (value instanceof $Promise) return value;
-    let promise = new $Promise(() => {});
-    if (promise._state === "pending") {
-      promise._internalResolve(value);
-    }
-    return promise;
-  }
+//    static resolve(value) {
+//     if (value instanceof $Promise) return value;
+//     let promise = new $Promise(() => {});
+//     if (promise._state === "pending") {
+//       promise._internalResolve(value);
+//     }
+//     return promise;
+//   }
     // static all(values) {
     //   if (values.some((ele) => ele instanceof $Promise)) {
     //     return values.reduce((accumulator, value) => {
@@ -40,7 +40,7 @@ class $Promise {
     //   } else return new $Promise(() => {}, "fulfilled", values);
     // }
 }
-
+//------------------------------------------------------------------
 $Promise.prototype._internalResolve = function (value){
     if(this._state === 'pending') {
         this._state = 'fulfilled'
@@ -48,6 +48,8 @@ $Promise.prototype._internalResolve = function (value){
         this._callHandlers(this._value);
     }   
 }
+
+//------------------------------------------------------------------
 $Promise.prototype._internalReject = function (reason){
     if(this._state === 'pending') {
         this._state = 'rejected'
@@ -55,6 +57,8 @@ $Promise.prototype._internalReject = function (reason){
         this._callHandlers(this._value);
     }
 }
+
+//------------------------------------------------------------------
 $Promise.prototype.then = function (successCb, errorCb) {
    typeof successCb !== 'function' ? (successCb = undefined) : false
    typeof errorCb !== 'function' ? (errorCb = undefined) : false
@@ -71,14 +75,15 @@ $Promise.prototype.then = function (successCb, errorCb) {
    return downstreamPromise;
 }
 
+//--------------------------------------------------------------------------------
 $Promise.prototype.catch = function(errorCb){
     return this.then(null, errorCb) // retornamos la promesa .then, pasando el primer parametro(resolve) como null, y pasandole el error como segundo parametro
 }
 
+//---------------------------------------------------------------------------------
 $Promise.prototype._callHandlers = function(value){
 
     while(this._handlerGroups.length > 0) {
-
         let currentHandler = this._handlerGroups.shift()
 
         if(this._state === 'fulfilled') {
@@ -88,18 +93,22 @@ $Promise.prototype._callHandlers = function(value){
             }
 
             else{
+
                 try {
                     let result = currentHandler.successCb(value)
+
                     if(result instanceof $Promise) {
                         result.then(
                             (value) => currentHandler.downstreamPromise._internalResolve(value),
-                            (error) => currentHandler.downstreamPromise._internalReject(error)
+                            (reason) => currentHandler.downstreamPromise._internalReject(reason)
                         )
                     }
+                    
                     else {
                         currentHandler.downstreamPromise._internalResolve(result)
                     }
                 }
+
                 catch (error) {
                     currentHandler.downstreamPromise._internalReject(error)
                 }
