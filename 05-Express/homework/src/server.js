@@ -10,13 +10,12 @@ let posts = [];
 const server = express();
 // to enable parsing of json bodies for post requests
 server.use(express.json());
-// let id = 1
+let id = 1
 
 // TODO: your code to handle requests
 
 server.post('/posts', (req, res)=> {
     const {author, title, contents} = req.body
-    let id = 1
     let newPost = {
         id: id++,
         author,
