@@ -36,7 +36,7 @@ args.forEach(function(arg){
   if (problem) problem();
 });
 
-function problemA () {
+async function problemA () {
   /* * * * * * * * * * * * * * * * * * * * * * * * * * * *
    *
    * A. loguea el poema uno stanza uno (ignorá errores)
@@ -50,16 +50,11 @@ function problemA () {
   // });
 
   // AsyncAwait version
-
-  async function pA(){
-    const result = await promisifiedReadFile('poem-one/stanza-01.txt').then(stanza => blue(stanza))
-    return result
-  }
-  console.log(pA())
-
+  const stanza = await promisifiedReadFile('poem-one/stanza-01.txt')
+  blue(stanza)
 }
 
-function problemB () {
+async function problemB () {
   /* * * * * * * * * * * * * * * * * * * * * * * * * * * *
    *
    * B. loggea el poema uno stanza dos y tres, en cualquier orden
@@ -78,15 +73,13 @@ function problemB () {
   // });
 
   // AsyncAwait version
-  async function pB(){
-    const result1 = await promisifiedReadFile('poem-one/stanza-02.txt').then(stanza2 => blue(stanza2))
-    const result2 = await promisifiedReadFile('poem-one/stanza-03.txt').then(stanza3 => blue(stanza3))
-    return result1, result2
-  }
-  console.log(pB())
+  const stanza2 = await promisifiedReadFile('poem-one/stanza-02.txt')
+  const stanza3 = await promisifiedReadFile('poem-one/stanza-03.txt')
+  blue(stanza2)
+  blue(stanza3)
 }
 
-function problemC () {
+async function problemC () {
   /* * * * * * * * * * * * * * * * * * * * * * * * * * * *
    *
    * C. lee & loggea el poema uno stanza dos y *DESPUES* lee & loggea
@@ -109,22 +102,14 @@ function problemC () {
   // });
 
   // AsyncAwait version
-  async function pC(){
-    const result = await promisifiedReadFile('poem-one/stanza-02.txt')
-    .then((stanza2) => {
-      blue(stanza2)
-    promisifiedReadFile('poem-one/stanza-03.txt')
-      .then((stanza3) => {
-        blue(stanza3)
-        console.log("-- C. promise version DONE --");
-      })
-    })
-    return result
-  }
-  console.log(pC())
+  const stanza2 = await promisifiedReadFile('poem-one/stanza-02.txt')
+  const stanza3 = await promisifiedReadFile('poem-one/stanza-03.txt')
+  blue(stanza2)
+  blue(stanza3)
+  console.log('done');
 }
 
-function problemD () {
+async function problemD () {
   /* * * * * * * * * * * * * * * * * * * * * * * * * * * *
    *
    * D. loggea el poema uno stanza cuatro o un error si llega a ocurrir
@@ -139,21 +124,15 @@ function problemD () {
   // });
 
   // AsyncAwait version
-  async function pD(){
-    const result = await promisifiedReadFile('poem-one/stanza-04.txt')
-    .then((stanza4) => {
-      blue(stanza4)
-    })
-    .catch((err) =>{
-      magenta(err)
-    })
-    return result
+  try {
+    const stanza = await promisifiedReadFile('poem-one/wrong-file-name.txt')
+    blue(stanza)
+  } catch (error) {
+    magenta(error)
   }
-  console.log(pD())
-
 }
 
-function problemE () {
+async function problemE () {
   /* * * * * * * * * * * * * * * * * * * * * * * * * * * *
    *
    * E. Lee y loggea el poema uno stanza tres y *DESPUES* lee y loggea la
@@ -175,25 +154,18 @@ function problemE () {
   // });
 
   // AsyncAwait version
-  async function pE(){
-    const result = await promisifiedReadFile('poem-one/stanza-03.txt')
-    .then((stanza3) => {
-      blue(stanza3)
-      promisifiedReadFile('poem-one/stanza-04.txt')
-        .then((stanza4) => {
-          blue(stanza4)
-        })
-    })
-    .catch((err) =>{
-      magenta(err)
-    })
-    return result
+  try {
+    const stanza3 = await promisifiedReadFile('poem-one/stanza-03.txt')
+    blue(stanza3)
+    const stanza4 = await promisifiedReadFile('poem-one/wrong-file-name.txt')
+    blue(stanza4)
+  } catch (error) {
+    magenta(error)
   }
-  console.log(pE())
 
 }
 
-function problemF () {
+async function problemF () {
   /* * * * * * * * * * * * * * * * * * * * * * * * * * * *
    *
    * F. Lee & loggea el poema uno stanza tres y *DESPUES* lee y loguea la
@@ -220,22 +192,14 @@ function problemF () {
   // });
 
   // AsyncAwait version
-
-  async function pF(){
-    const result = await promisifiedReadFile('poem-one/stanza-03.txt')
-    .then((stanza3) => {
-      blue(stanza3)
-      promisifiedReadFile('poem-one/stanza-04.txt')
-        .then((stanza4) => {
-          blue(stanza4)
-          console.log('-- F. callback version done --')
-         })
-    })
-    .catch((err) => {
-      magenta(err)
-    })
-    return result
+  try {
+    const stanza3 = await promisifiedReadFile('poem-one/stanza-03.txt')
+    const stanza4 = await promisifiedReadFile('poem-one/wrong-file-name.txt')
+    blue(stanza3)
+    blue(stanza4)
+  } catch (error) {
+    magenta(error)
+  } finally {
+    console.log('done');
   }
-  console.log(pF())
-
 }
