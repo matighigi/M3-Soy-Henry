@@ -16,12 +16,14 @@ describe('Test de APIS', () => {
     it('responds with 200', () => agent.get('/test').expect(200));
     it('responds with and object with message `test`', () =>
       agent.get('/test').then((res) => {
-        expect(res.body.message).toEqual('hola');
+        expect(res.body.message).toEqual('test');//le cambie 'hola' a 'test'
       }));
   });
 
   describe('POST /sum', () => {
-    it('responds with 200', () => agent.post('/sum').expect(200));
+    it('responds with 200', () => agent.post('/sum')
+    .send({a: 2, b: 3})
+    .expect(200));
     it('responds with the sum of 2 and 3', () =>
       agent.post('/sum')
         .send({a: 2, b: 3})
@@ -31,8 +33,10 @@ describe('Test de APIS', () => {
     );
   });
 
-  describe('POST /producto', () => {
-    it('responds with 200', () => agent.post('/product').expect(200));
+  describe('POST /product', () => {
+    it('responds with 200', () => agent.post('/product')
+    .send({a: 2, b: 3})
+    .expect(200));
     it('responds with the product of 2 and 3', () =>
       agent.post('/product')
         .send({a: 2, b: 3})
@@ -43,14 +47,106 @@ describe('Test de APIS', () => {
   });
 
   describe('POST /sumArray', () => {
-    it('responds with 200', () => agent.get('/test').expect(200));
-    it('responds with and object with message `test`', () =>
+    it('responds with 200', () => agent.post('/sumArray')
+    .send({array: [2,5,7,10,11,15,20], num: 13})
+    .expect(200));
+    it('responds true if a combination of two numbers get the target', () =>
       agent.post('/sumArray')
         .send({array: [2,5,7,10,11,15,20], num: 13})
         .then((res) => {
           expect(res.body.result).toEqual(true);
       }));
+
+      it('responde con false si hay una combinación valida', () => {
+        return agent.post('/sumArray')
+        .send({array: [1, 2, 3, 4, 5], num: 3001})
+        .then(
+          res => expect(res.body.result).toEqual(false)
+        )
+      })
+
+      it('no debe sumar dos veces el mismo numero', () => {
+        return agent.post('/sumArray')
+        .send({array: [1, 2, 3, 4, 5], num: 2})
+        .then(
+          res => expect(res.body.result).toEqual(false)
+        )
+      })
+
+ 
+
+
+
   });
+  describe('POST /numString', () => {
+
+      it('responde con status 200', () => {
+        return agent.post('/numString')
+        .send({str: 'tuki'})
+        .expect(200)
+      })
+
+      it('responde con 4 si enviamos `hola`', () => {
+        return agent.post('/numString')
+        .send({str: 'hola'})
+        .then(
+          res => expect(res.body.result).toBe(4)
+        )
+      })
+
+      it('responde con status 400 si el string es un numero', () => {
+        return agent.post('/numString')
+        .send({str: 7})
+        .expect(400)
+      })
+
+      it('responde con status 400 si el string está vacio', () => {
+        return agent.post('/numString')
+        .send({str: ''})
+        .expect(400)
+      })
+
+  })
+
+  describe('POST /pluck', () => {
+
+    it('responde con status 200', () => {
+      return agent.post('/pluck')
+      .send({
+        array: [{name: 'Dai', name: 'Aylen', name: 'Lean', name: 'Carlos'}],
+        name: 'name'
+      })
+      .expect(200)
+    })
+
+    it('responde con la funcionalidad del pluck', () => {
+      return agent.post('/pluck')
+      .send({
+        array: [{name: 'Dai'}, {name: 'Aylen'}, {name: 'Lean'}, {name: 'Carlos'}],
+        name: 'name'
+      })
+      .then(
+        res => expect(res.body.result).toEqual(['Dai', 'Aylen', 'Lean', 'Carlos'])
+      )
+    })
+
+    it('responde con status 400 si el array no es un array', () => {
+      return agent.post('/pluck')
+      .send({array: 'tuki', name: 'name'})
+      .expect(400)
+    })
+
+    it('responde con status 400 si el string propiedad está vacio', () => {
+      return agent.post('/pluck')
+      .send({
+        array: [{name: 'Dai'}, {name: 'Aylen'}, {name: 'Lean'}, {name: 'Carlos'}],
+        name: ''
+      })
+      .expect(400)
+    })
+
+
+  })
 
 });
 
