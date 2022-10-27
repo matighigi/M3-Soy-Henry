@@ -26,7 +26,9 @@ postsRouter.post('/', (req, res) => {
     }
 })
 
-
+postsRouter.get('/', (req, res) => {
+    
+})
 
 
 module.exports = postsRouter;
